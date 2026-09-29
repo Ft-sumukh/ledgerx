@@ -1,0 +1,76 @@
+services:
+  # -------------------------------------------------------------------------
+  # PostgreSQL 16 — Primary Relational Store
+  # -------------------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: orbit-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${ORBIT_DB_USER:-orbit_user}
+      POSTGRES_PASSWORD: ${ORBIT_DB_PASSWORD:-orbit_secret_pass}
+      POSTGRES_DB: ${ORBIT_DB_NAME:-ledger_orbit}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U orbit_user -d ledger_orbit"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orbit-network
+
+  # -------------------------------------------------------------------------
+  # Redis 7 — In-Memory Store & Streams Message Broker
+  # -------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: orbit-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - orbit-network
+
+  # -------------------------------------------------------------------------
+  # API Service — FastAPI
+  # -------------------------------------------------------------------------
+  api:
+    build:
+      context: ../..
+      dockerfile: infrastructure/docker/Dockerfile.api
+    container_name: orbit-api
+    restart: unless-stopped
+    environment:
+      ORBIT_ENVIRONMENT: production
+      ORBIT_DATABASE_URL: postgresql+asyncpg://${ORBIT_DB_USER:-orbit_user}:${ORBIT_DB_PASSWORD:-orbit_secret_pass}@postgres:5432/${ORBIT_DB_NAME:-ledger_orbit}
+      ORBIT_REDIS_URL: redis://redis:6379/0
+      ORBIT_REDIS_ENABLED: "true"
+      ORBIT_SECRET_KEY: ${ORBIT_SECRET_KEY:-CHANGE_ME_IN_PRODUCTION_USE_32_BYTE_RANDOM_SECRET}
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - orbit-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  orbit-network:
+    driver: bridge
