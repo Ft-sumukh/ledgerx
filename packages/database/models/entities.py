@@ -128,6 +128,10 @@ class Account(Base, UUIDMixin, TimestampMixin):
             "normal_balance IN ('DEBIT', 'CREDIT')",
             name="chk_account_normal_balance_valid",
         ),
+        CheckConstraint(
+            "category IN ('ASSET', 'LIABILITY', 'EQUITY', 'REVENUE', 'EXPENSE')",
+            name="chk_account_category_valid",
+        ),
     )
 
     account_number: Mapped[str] = mapped_column(
@@ -136,6 +140,12 @@ class Account(Base, UUIDMixin, TimestampMixin):
         index=True,
         nullable=False,
         comment="Hierarchical chart-of-accounts number, e.g. 1010-CUST-001",
+    )
+    category: Mapped[str] = mapped_column(
+        String(20),
+        default="ASSET",
+        nullable=False,
+        comment="ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE",
     )
     account_type: Mapped[str] = mapped_column(
         String(30),
@@ -151,6 +161,11 @@ class Account(Base, UUIDMixin, TimestampMixin):
         String(3),
         nullable=False,
         comment="ISO-4217 Currency (USD, EUR, INR, GBP)",
+    )
+    parent_account_id: Mapped[str | None] = mapped_column(
+        String(36),
+        ForeignKey("accounts.id", ondelete="SET NULL"),
+        nullable=True,
     )
     owner_type: Mapped[str] = mapped_column(
         String(30),

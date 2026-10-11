@@ -12,7 +12,7 @@
 [![React 19](https://img.shields.io/badge/React-19.0.0-61dafb.svg?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178c6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38b2ac.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Pytest](https://img.shields.io/badge/Pytest-87%20Passed-brightgreen.svg?logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![Pytest](https://img.shields.io/badge/Pytest-101%20Passed-brightgreen.svg?logo=pytest&logoColor=white)](https://docs.pytest.org/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Multi--Stage-2496ed.svg?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -116,11 +116,14 @@ Every capability in this repository is explicitly classified below based on veri
 | **API Layer** | Correlation Middleware | ✅ Implemented | `X-Correlation-ID` header roundtrip and request ID tracking. |
 | **API Layer** | Deep Health & Metrics | ✅ Implemented | `GET /api/v1/system/health` (live DB & Queue checks), `GET /api/v1/system/metrics`. |
 | **Frontend** | Enterprise Dashboard | ✅ Implemented | Next.js 15 App Router, React 19, Tailwind CSS, live simulator. |
-| **Testing** | Automated Test Harness | ✅ Implemented | **87 / 87 passing tests** (Pytest + Hypothesis property tests + ASGI integration). |
+| **Testing** | Automated Test Harness | ✅ Implemented | **101 / 101 passing tests** (Pytest + Hypothesis property tests + ASGI integration). |
 | **DevOps** | Containerization | ✅ Implemented | Multi-stage `Dockerfile.api` (non-root) & `docker-compose.yml` (Postgres+Redis). |
 | **Persistence** | Relational Entities | ✅ Implemented | Customer, Merchant, Account, LedgerTransaction, LedgerEntry, PaymentIntent, Outbox models. |
 | **Persistence** | Schema Verification | ✅ Implemented | SQLAlchemy 2.0 metadata engine with check constraints & relational foreign keys. |
 | **Financial Engine** | Double-Entry Posting Engine | ✅ Implemented | Atomic multi-legged journal posting engine with balance validation ($\sum \text{Debits} == \sum \text{Credits}$). |
+| **Financial Engine** | Compensating Reversals & Immutability | ✅ Implemented | Mirror-entry canceling transactions, outbox audit events, strict immutability preservation. |
+| **Financial Reporting**| Financial Statements Engine | ✅ Implemented | Trial Balance parity, Balance Sheet ($\text{Assets} == \text{Liabilities} + \text{Equity}$), Income Statement, running-balance Account Statements. |
+| **Account Taxonomy** | Chart of Accounts Hierarchy | ✅ Implemented | Standard GAAP/IFRS categories (`ASSET`, `LIABILITY`, `EQUITY`, `REVENUE`, `EXPENSE`), parent-child hierarchy, template seeder. |
 | **Payment Flow** | PaymentIntent Engine | 🚧 Planned | End-to-end intent lifecycle and simulated card network provider (Phase 4). |
 | **Worker Engine** | Distributed Worker Pool | 🚧 Planned | Background consumer loop with backpressure and graceful draining (Phase 7). |
 | **Scheduling** | Distributed Job Scheduler | 🚧 Planned | Distributed leases / leader election for cron and recurring tasks (Phase 8). |
@@ -860,7 +863,7 @@ tests/unit/test_queue.py ............                                    [100%]
 | **0** | **Engineering Constitution** | ✅ Complete | Invariant specifications, architectural guidelines, ADRs, documentation. |
 | **1** | **Platform Foundation** | ✅ Complete | Money value object, Queue abstraction, FastAPI shell, health checks, 69 tests. |
 | **2** | **Database & Domain Model** | ✅ Complete | Customer, Merchant, Account, Ledger models, double-entry engine, 87 tests. |
-| **3** | **Double-Entry Ledger Engine** | 🚧 Planned | Full multi-tenant isolation, chart of accounts hierarchy, ledger reporting. |
+| **3** | **Double-Entry Ledger Engine** | ✅ Complete | Chart of accounts hierarchy, compensating reversals, point-in-time balances, financial statements (Trial Balance, Balance Sheet, P&L), 101 tests. |
 | **4** | **Payment Processing Engine** | 🚧 Planned | PaymentIntent state machine, attempt retry tracker, demo payment provider. |
 | **5** | **Idempotency & Reliability** | 🚧 Planned | Distributed idempotency filter, concurrent collision protection, conflict gates. |
 | **6** | **Event-Driven Architecture** | 🚧 Planned | Outbox polling daemon, event publisher, consumer deduplication store. |

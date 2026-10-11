@@ -179,6 +179,21 @@ class EntryDirection(StrEnum):
     CREDIT = "CREDIT"
 
 
+class AccountCategory(StrEnum):
+    ASSET = "ASSET"
+    LIABILITY = "LIABILITY"
+    EQUITY = "EQUITY"
+    REVENUE = "REVENUE"
+    EXPENSE = "EXPENSE"
+
+
+def normal_balance_for_category(category: AccountCategory) -> NormalBalance:
+    """Returns the normal accounting balance direction for a fundamental category."""
+    if category in (AccountCategory.ASSET, AccountCategory.EXPENSE):
+        return NormalBalance.DEBIT
+    return NormalBalance.CREDIT
+
+
 class NormalBalance(StrEnum):
     DEBIT = "DEBIT"
     CREDIT = "CREDIT"

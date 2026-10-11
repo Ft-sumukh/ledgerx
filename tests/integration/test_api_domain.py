@@ -11,9 +11,17 @@ from httpx import ASGITransport, AsyncClient
 from apps.api.main import app
 
 
+from packages.database.base import Base
+from packages.database.session import get_db_manager
+
+
 @pytest.fixture
 async def client():
     async with app.router.lifespan_context(app):
+        db_manager = get_db_manager()
+        async with db_manager.session() as s:
+            for table in reversed(Base.metadata.sorted_tables):
+                await s.execute(table.delete())
         async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
             yield c
 

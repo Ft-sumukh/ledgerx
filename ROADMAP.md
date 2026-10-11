@@ -20,7 +20,18 @@ Ledger-X is built incrementally across 14 dedicated phases. Each phase is implem
 - Double-entry balance invariant engine ($\sum \text{Debits} == \sum \text{Credits}$) and transactional outbox persistence
 - 87 / 87 passing unit, invariant, and API integration tests
 
-### [ ] Part 3: Authentication
+### [x] Part 3: Double-Entry Ledger Engine & Financial Reporting
+- Chart of Accounts taxonomy & seeder with standard GAAP/IFRS categories (`ASSET`, `LIABILITY`, `EQUITY`, `REVENUE`, `EXPENSE`)
+- Ledger immutability & compensating reversals: inverted debit/credit legs, related transaction linkage, and outbox event audit trail
+- Deterministic point-in-time balance derivation engine
+- Comprehensive Financial Reporting Services:
+  - Trial Balance parity verification ($\sum \text{Debits} == \sum \text{Credits}$)
+  - Balance Sheet accounting equation ($\text{Assets} == \text{Liabilities} + \text{Equity}$)
+  - Income Statement ($\text{Net Income} = \text{Revenue} - \text{Expenses}$)
+  - Chronological running-balance Account Statements
+- 101 / 101 passing unit, invariant, and API integration tests
+
+### [ ] Part 4: Authentication & Security
 - Secure registration, login, logout
 - Password hashing (Argon2id/bcrypt) & session security
 - Authentication middleware and token validation

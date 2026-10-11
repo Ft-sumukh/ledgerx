@@ -2,6 +2,7 @@
 LEDGER-ORBIT: shared_types package
 """
 from packages.shared_types.money import (
+    AccountCategory,
     AccountType,
     Currency,
     EntryDirection,
@@ -13,9 +14,11 @@ from packages.shared_types.money import (
     WorkerStatus,
     PAYMENT_TRANSITIONS,
     is_valid_payment_transition,
+    normal_balance_for_category,
 )
 
 __all__ = [
+    "AccountCategory",
     "AccountType",
     "Currency",
     "EntryDirection",
@@ -27,4 +30,5 @@ __all__ = [
     "WorkerStatus",
     "PAYMENT_TRANSITIONS",
     "is_valid_payment_transition",
+    "normal_balance_for_category",
 ]

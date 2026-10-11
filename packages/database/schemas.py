@@ -1,7 +1,7 @@
 """
 LEDGER-ORBIT: Pydantic Domain Schemas
 =====================================
-Validation and serialization schemas for Customer, Merchant, Account, Ledger, and Payment entities.
+Validation and serialization schemas for Customer, Merchant, Account, Ledger, and Financial Reporting.
 
 DESIGN:
   - Zero floats: monetary amounts represented strictly as int (minor units).
@@ -16,6 +16,7 @@ from typing import Any, List, Optional
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from packages.shared_types.money import (
+    AccountCategory,
     AccountType,
     Currency,
     EntryDirection,
@@ -65,7 +66,9 @@ class MerchantResponse(BaseModel):
 class AccountCreate(BaseModel):
     account_number: str = Field(..., min_length=1, max_length=64)
     account_type: AccountType
+    category: Optional[AccountCategory] = None
     currency: Currency
+    parent_account_id: Optional[str] = None
     owner_type: str = Field(..., pattern="^(CUSTOMER|MERCHANT|PLATFORM)$")
     owner_id: Optional[str] = None
     customer_id: Optional[str] = None
@@ -77,9 +80,11 @@ class AccountResponse(BaseModel):
 
     id: str
     account_number: str
+    category: str
     account_type: str
     normal_balance: str
     currency: str
+    parent_account_id: Optional[str] = None
     owner_type: str
     owner_id: Optional[str] = None
     customer_id: Optional[str] = None
@@ -163,6 +168,11 @@ class LedgerTransactionResponse(BaseModel):
     created_at: datetime
 
 
+class ReversalRequest(BaseModel):
+    reason: str = Field(..., min_length=3, max_length=500)
+    reference: Optional[str] = None
+
+
 class PaymentIntentCreate(BaseModel):
     idempotency_key: str = Field(..., min_length=1, max_length=128)
     amount_minor: int = Field(..., gt=0)
@@ -188,3 +198,82 @@ class PaymentIntentResponse(BaseModel):
     correlation_id: str
     created_at: datetime
     updated_at: datetime
+
+
+# ---------------------------------------------------------------------------
+# Reporting & Statements Models
+# ---------------------------------------------------------------------------
+
+class TrialBalanceItem(BaseModel):
+    account_id: str
+    account_number: str
+    account_name: Optional[str] = None
+    category: str
+    account_type: str
+    currency: str
+    normal_balance: str
+    total_debit_minor: int
+    total_credit_minor: int
+    net_balance_minor: int
+
+
+class TrialBalanceReport(BaseModel):
+    as_of: datetime
+    currency: str
+    accounts: List[TrialBalanceItem]
+    total_debits_minor: int
+    total_credits_minor: int
+    is_balanced: bool
+    discrepancy_minor: int
+
+
+class CategorySummary(BaseModel):
+    category: str
+    total_minor: int
+    accounts: List[TrialBalanceItem]
+
+
+class BalanceSheetReport(BaseModel):
+    as_of: datetime
+    currency: str
+    assets: CategorySummary
+    liabilities: CategorySummary
+    equity: CategorySummary
+    total_assets_minor: int
+    total_liabilities_and_equity_minor: int
+    is_balanced: bool
+    variance_minor: int
+
+
+class IncomeStatementReport(BaseModel):
+    from_date: Optional[datetime] = None
+    to_date: datetime
+    currency: str
+    revenue: CategorySummary
+    expenses: CategorySummary
+    total_revenue_minor: int
+    total_expenses_minor: int
+    net_income_minor: int
+
+
+class AccountStatementEntry(BaseModel):
+    entry_id: str
+    transaction_id: str
+    transaction_reference: str
+    posted_at: datetime
+    description: str
+    direction: str
+    amount_minor: int
+    running_balance_minor: int
+
+
+class AccountStatementReport(BaseModel):
+    account_id: str
+    account_number: str
+    account_type: str
+    category: str
+    currency: str
+    normal_balance: str
+    opening_balance_minor: int
+    closing_balance_minor: int
+    entries: List[AccountStatementEntry]

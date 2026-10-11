@@ -37,10 +37,12 @@ from packages.database.schemas import (
 )
 from packages.logging.logger import get_logger
 from packages.shared_types.money import (
+    AccountCategory,
     AccountType,
     EntryDirection,
     NormalBalance,
     PaymentStatus,
+    normal_balance_for_category,
 )
 
 logger = get_logger(__name__)
@@ -133,21 +135,34 @@ class AccountRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    def _determine_normal_balance(self, account_type: AccountType) -> str:
-        # Asset / Customer accounts are normal DEBIT
-        # Liability / Equity / Revenue / Merchant accounts are normal CREDIT
-        if account_type in (AccountType.CUSTOMER, AccountType.RESERVE):
-            return NormalBalance.DEBIT.value
-        return NormalBalance.CREDIT.value
+    def _determine_category_and_normal_balance(
+        self, account_type: AccountType, category: Optional[AccountCategory] = None
+    ) -> tuple[str, str]:
+        if category is not None:
+            norm = normal_balance_for_category(category).value
+            return category.value, norm
+
+        # Derive category from AccountType
+        mapping: dict[AccountType, tuple[str, str]] = {
+            AccountType.CUSTOMER: ("ASSET", NormalBalance.DEBIT.value),
+            AccountType.RESERVE: ("ASSET", NormalBalance.DEBIT.value),
+            AccountType.SETTLEMENT: ("ASSET", NormalBalance.DEBIT.value),
+            AccountType.MERCHANT: ("LIABILITY", NormalBalance.CREDIT.value),
+            AccountType.FEES: ("REVENUE", NormalBalance.CREDIT.value),
+            AccountType.PLATFORM: ("EQUITY", NormalBalance.CREDIT.value),
+        }
+        return mapping.get(account_type, ("ASSET", NormalBalance.DEBIT.value))
 
     async def create(self, data: AccountCreate) -> Account:
-        normal_bal = self._determine_normal_balance(data.account_type)
+        cat_val, normal_bal = self._determine_category_and_normal_balance(data.account_type, data.category)
         account = Account(
             id=str(uuid.uuid4()),
             account_number=data.account_number,
+            category=cat_val,
             account_type=data.account_type.value,
             normal_balance=normal_bal,
             currency=data.currency.value,
+            parent_account_id=data.parent_account_id,
             owner_type=data.owner_type,
             owner_id=data.owner_id,
             customer_id=data.customer_id,
