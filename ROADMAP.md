@@ -13,10 +13,12 @@ Ledger-X is built incrementally across 14 dedicated phases. Each phase is implem
 - Healthcheck endpoint and foundation documentation
 - Initial Git baseline pushed to remote origin
 
-### [ ] Part 2: Database & Domain Model
-- PostgreSQL schema setup & migrations
-- Entities: Organization, User, Account, Transaction, LedgerEntry, AuditLog
-- Strict constraints, foreign keys, and indexes
+### [x] Part 2: Database & Domain Model
+- PostgreSQL & SQLite async SQLAlchemy 2.0 schema setup
+- Entities: Customer, Merchant, Account, LedgerTransaction, LedgerEntry, PaymentIntent, IdempotencyRecord, OutboxEvent
+- Strict check constraints (amount_minor > 0, direction in ('DEBIT', 'CREDIT'), normal balance), foreign keys, and indexes
+- Double-entry balance invariant engine ($\sum \text{Debits} == \sum \text{Credits}$) and transactional outbox persistence
+- 87 / 87 passing unit, invariant, and API integration tests
 
 ### [ ] Part 3: Authentication
 - Secure registration, login, logout

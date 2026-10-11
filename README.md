@@ -12,7 +12,7 @@
 [![React 19](https://img.shields.io/badge/React-19.0.0-61dafb.svg?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7.3-3178c6.svg?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.17-38b2ac.svg?logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Pytest](https://img.shields.io/badge/Pytest-69%20Passed-brightgreen.svg?logo=pytest&logoColor=white)](https://docs.pytest.org/)
+[![Pytest](https://img.shields.io/badge/Pytest-87%20Passed-brightgreen.svg?logo=pytest&logoColor=white)](https://docs.pytest.org/)
 [![Docker Ready](https://img.shields.io/badge/Docker-Multi--Stage-2496ed.svg?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -116,11 +116,11 @@ Every capability in this repository is explicitly classified below based on veri
 | **API Layer** | Correlation Middleware | ✅ Implemented | `X-Correlation-ID` header roundtrip and request ID tracking. |
 | **API Layer** | Deep Health & Metrics | ✅ Implemented | `GET /api/v1/system/health` (live DB & Queue checks), `GET /api/v1/system/metrics`. |
 | **Frontend** | Enterprise Dashboard | ✅ Implemented | Next.js 15 App Router, React 19, Tailwind CSS, live simulator. |
-| **Testing** | Automated Test Harness | ✅ Implemented | **69 / 69 passing tests** (Pytest + Hypothesis property tests + ASGI integration). |
+| **Testing** | Automated Test Harness | ✅ Implemented | **87 / 87 passing tests** (Pytest + Hypothesis property tests + ASGI integration). |
 | **DevOps** | Containerization | ✅ Implemented | Multi-stage `Dockerfile.api` (non-root) & `docker-compose.yml` (Postgres+Redis). |
-| **Persistence** | Relational Entities | 🟡 Partially Implemented | Declarative Base & Session ready; Customer, Merchant, Account models scheduled for Phase 2. |
-| **Persistence** | Schema Migrations | 🚧 Planned | Alembic versioned migration tree (Phase 2). |
-| **Financial Engine** | Double-Entry Posting Engine | 🚧 Planned | Atomic multi-legged journal posting engine with balance validation (Phase 3). |
+| **Persistence** | Relational Entities | ✅ Implemented | Customer, Merchant, Account, LedgerTransaction, LedgerEntry, PaymentIntent, Outbox models. |
+| **Persistence** | Schema Verification | ✅ Implemented | SQLAlchemy 2.0 metadata engine with check constraints & relational foreign keys. |
+| **Financial Engine** | Double-Entry Posting Engine | ✅ Implemented | Atomic multi-legged journal posting engine with balance validation ($\sum \text{Debits} == \sum \text{Credits}$). |
 | **Payment Flow** | PaymentIntent Engine | 🚧 Planned | End-to-end intent lifecycle and simulated card network provider (Phase 4). |
 | **Worker Engine** | Distributed Worker Pool | 🚧 Planned | Background consumer loop with backpressure and graceful draining (Phase 7). |
 | **Scheduling** | Distributed Job Scheduler | 🚧 Planned | Distributed leases / leader election for cron and recurring tasks (Phase 8). |
@@ -859,8 +859,8 @@ tests/unit/test_queue.py ............                                    [100%]
 | :---: | :--- | :---: | :--- |
 | **0** | **Engineering Constitution** | ✅ Complete | Invariant specifications, architectural guidelines, ADRs, documentation. |
 | **1** | **Platform Foundation** | ✅ Complete | Money value object, Queue abstraction, FastAPI shell, health checks, 69 tests. |
-| **2** | **Database & Domain Model** | 🚧 Planned | Customer, Merchant, Account entities, SQLAlchemy models, Alembic migrations. |
-| **3** | **Double-Entry Ledger Engine** | 🚧 Planned | Atomic multi-legged transaction posting engine, journal balance validator. |
+| **2** | **Database & Domain Model** | ✅ Complete | Customer, Merchant, Account, Ledger models, double-entry engine, 87 tests. |
+| **3** | **Double-Entry Ledger Engine** | 🚧 Planned | Full multi-tenant isolation, chart of accounts hierarchy, ledger reporting. |
 | **4** | **Payment Processing Engine** | 🚧 Planned | PaymentIntent state machine, attempt retry tracker, demo payment provider. |
 | **5** | **Idempotency & Reliability** | 🚧 Planned | Distributed idempotency filter, concurrent collision protection, conflict gates. |
 | **6** | **Event-Driven Architecture** | 🚧 Planned | Outbox polling daemon, event publisher, consumer deduplication store. |
